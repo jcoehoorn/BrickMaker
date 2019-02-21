@@ -7,35 +7,27 @@ length = 4;
 width = 2;
 
 //Nozzle Size
-// Used to avoid generating support lines to skinny to print well.
-// If you want exact lines, lie and set this to something small like .1
-// Adjust if you have a .5mm nozzle and want full-width lines.
+// Used to avoid generating support lines too skinny to print well. If you want exact lines, lie and set this to something small like .1mm.
 nozzle_size = .4;
 
-//Amount to shrink the outer walls (make them skinnier)
-// This adjustment will be removed from *both sides* and does impact the overall size of the resulting brick.
+// This adjustment will be removed from the thickness of the wall on *both sides* and does impact the overall size of the resulting brick.
 wall_adjustment = .2;
 
-//Additioanl spacing factor between individual pieces.
-// This adjustment will reduce the length of walls on *both sides*.
+//Additional spacing factor between individual pieces. This adjustment will reduce the length of walls on *both sides*.
 gap_factor = -0.08; 
 
-//Amount to remove from brick height
-// Divided by three for plates.
+//Amount to remove from brick height. Divided by three for plates/bases.
 height_adjustment = 0;
 
-//Amount to remove from the height of the studs
+//Amount to remove from the height of studs
 stud_height_adjustment = .1;
 
-//Amount to remove the radius of the studs
-// I've found studs often end up too small, rather than too  large.
+//Amount to remove from the radius of studs
 stud_radius_adjustment = 0;
 
-//Full-height brick vs plate vs base
-//A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
+//Full-height brick vs plate vs base. A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
 block_type = "brick"; // [brick:Brick, plate:Plate, base:Base]
 
-//Surface type
 //Normal has studs, tiles do not
 surface_type = "normal"; // [normal:Normal, tile:Tile]
 

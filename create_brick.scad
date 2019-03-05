@@ -16,7 +16,7 @@ wall_adjustment = .2;
 //Additional spacing factor between individual pieces. This adjustment will reduce the length of walls on *both sides*.
 gap_factor = -0.08; 
 
-//Amount to remove from brick height. Divided by three for plates/bases.
+//Amount to remove from brick height. Divided by three for plates/bases. Typically full-height bricks are already okay, but plates may need a height reduction.
 height_adjustment = 0;
 
 //Amount to remove from the height of studs
@@ -135,14 +135,16 @@ if (surface_type != "tile")
 //INTERIOR RIDGES
 
 //TODO: confirm this adjustment works 
-//  I'm pretty sure it won't work... a .5 nozzle needs a smaller PF, but a larger ridge adjustment.
+//  I'm pretty sure it's not good enough... a .5 nozzle needs a smaller PF, but a larger ridge adjustment.
 //  Maybe just move the whole thing to a user option.
 //  These ridges are a challenge for printers. I probably also need a post adjustment
 ridge_d = .3 - PF/4; 
 ridge_w = LU/2<nozzle_size?nozzle_size:LU/2;
 
 //Q: does a 2x2 brick have ridges?
-if (w > 1)
+
+// plates and bases do not have ridges
+if (block_type == "brick" && w > 1)
 {
     //long edge
     for(x=[0:l-1])
@@ -216,6 +218,8 @@ else
     
 
     // Not sure how to handle cross support yet for non-standard (odd-length) bricks with an even number of posts
+    
+    //TODO: align cross support widths to an exact multiple of the nozzle diameter
        
     outer = ((((pow(2,.5)*5)-3)/2) * LU)-(PF/4);
     inner = 1.5*LU;

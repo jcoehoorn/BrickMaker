@@ -1,15 +1,15 @@
 //Number of studs long
-length = 2;
+length = 4;
 
 //Number of studs wide
 width = 2;
 
 //Nozzle Size
 // Used to avoid generating support lines too skinny to print well. If you want exact lines, lie and set this to something small like .1mm.
-nozzle_size = .4;
+nozzle_size = 0.4;
 
 // This adjustment will be removed from the thickness of the wall on *both sides* and does impact the overall size of the resulting brick.
-wall_adjustment = .2;
+wall_adjustment = 0.2;
 
 //Additional spacing factor between individual pieces. This adjustment will reduce the length of walls on *both sides*.
 gap_factor = -0.088; 
@@ -18,13 +18,13 @@ gap_factor = -0.088;
 height_adjustment = 0;
 
 //Amount to remove from the height of studs
-stud_height_adjustment = .1;
+stud_height_adjustment = 0.1;
 
 //Amount to remove from the radius of studs
-stud_radius_adjustment = -.02;
+stud_radius_adjustment = -0.02;
 
 //Amount to remove from the radius of the supports posts. Only used on 2xN pieces. Default is one quarter of the standard play factor
-support_post_radius_adjustment = .025;
+support_post_radius_adjustment = 0.025;
 
 //Full-height brick vs plate vs base. A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
 block_type = "brick"; // [brick:Brick, plate:Plate, base:Base]
@@ -66,6 +66,7 @@ wall_thickness = lego_unit - (2 * wall_adjustment);
 include_cross_supports = "Y"; // [Y:Yes, N:No]
 /* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway when it's time to print the top wall */
 
+
 //brick is default. If we don't understand this, default to brick height
 brick_height = ((block_type == "plate" || block_type == "base")? (2*LU) : 6*LU);
 
@@ -105,8 +106,14 @@ translate([(l*SU) - (2*G)-LU,0,0])
 }
 
 //top
+
+//TODO: Underside of the top wall needs to bridge over open area
+//      and is often not very clean. That's fine for bricks and bases,
+//      but for plates, it means not enough space for the studs from
+//      the piece below. We need a way to allow an additional narrowing
+//      of this section when rendering plates.
 translate([0,0,h-WT])
-{
+{   
     cube([long_wall_l, short_wall_l, WT],0);  
 };
 
@@ -135,7 +142,7 @@ if (surface_type != "tile")
 
 // ridge depth should make up the space lost for interior wall adjusment + add .1mm (Lego play factor) to help it grip
 //TODO: now that I have a good default, make an adjustment for this
-ridge_d = PF + .1;
+ridge_d = PF + 0.1;
 //  These ridges can challenge printers; make sure minimum length is 2*nozzle
 ridge_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
 
@@ -225,7 +232,7 @@ else
     
     sup_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
     
-    outer = ((((pow(2,.5)*5)-3)/2) * LU)-support_post_radius_adjustment;
+    outer = ((((pow(2,0.5)*5)-3)/2) * LU)-support_post_radius_adjustment;
     inner = outer - sup_w;
     
     for(x=[1:l-1])
@@ -238,9 +245,9 @@ else
                 {
                     cylinder(h, outer, outer, $fn=40);
                 }
-                translate([SU*x-PF-G,SU*y-PF-G, -.1])
+                translate([SU*x-PF-G,SU*y-PF-G, -0.1])
                 {
-                    cylinder((h-LU)+.1, inner, inner, $fn=40);
+                    cylinder((h-LU)+0.1, inner, inner, $fn=40);
                 }
             }
             

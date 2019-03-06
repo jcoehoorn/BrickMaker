@@ -222,7 +222,7 @@ else
     //TODO: align cross support widths to an exact multiple of the nozzle diameter
        
     outer = ((((pow(2,.5)*5)-3)/2) * LU)-(PF/4);
-    inner = 1.5*LU;
+    inner = outer - (nozzle_size*2); //default: 1.5LU
     
     sup_w = LU/2<nozzle_size?nozzle_size:LU/2;
     

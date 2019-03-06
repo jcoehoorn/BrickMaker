@@ -1,7 +1,7 @@
 
 
 //Number of studs long
-length = 4;
+length = 2;
 
 //Number of studs wide
 width = 2;
@@ -25,6 +25,9 @@ stud_height_adjustment = .1;
 //Amount to remove from the radius of studs
 stud_radius_adjustment = -.02;
 
+//Amount to remove from the radius of the supports posts. Only used on 2xN pieces. Default is one quarter of the standard play factor
+support_post_radius_adjustment = .025;
+
 //Full-height brick vs plate vs base. A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
 block_type = "brick"; // [brick:Brick, plate:Plate, base:Base]
 
@@ -43,7 +46,6 @@ unit_span = 5*LU;
 SU = unit_span; //short-hand (stands for: Stud Unit)
 
 //TODO: way to make the top wall skinner for larger nozzle sizes
-//TODO: Post adjustment
 //TODO: ridge adjustments (needed because of wall and nozzle adjustments)
 
 /* STUD HEIGHT:
@@ -64,7 +66,7 @@ wall_thickness = lego_unit - (2 * wall_adjustment);
 // Do not appear on plates.
 // They bridge up to a 3.2mm gap about 1.6mm above the build surface, so set this to "No" if the gap will cause a problem for your printer
 include_cross_supports = "Y"; // [Y:Yes, N:No]
-/* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway. */
+/* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway when it's time to print the top wall */
 
 
 //brick is default. If we don't understand this, default to brick height
@@ -82,7 +84,7 @@ PF = wall_adjustment; //short-hand; stands for Play Factor (Lego's term, I belie
 
 //OUTER WALLS
 
-//gap factor and play factor to outer wall from both sides of the part,
+//gap factor and play factor remove from outer wall on BOTH SIDES of the part,
 // so double them when accounting for wall lengths
 long_wall_l = (l*SU)-(2*G)-(2*PF);
 short_wall_l = (w*SU)-(2*G)-(2*PF);
@@ -100,7 +102,7 @@ translate([0,short_wall_l-WT,0])
 
 cube([WT, short_wall_l,h],0);
 
-translate([(l*unit_span) - (2*gap_factor)-LU,0,0])
+translate([(l*SU) - (2*G)-LU,0,0])
 {
     cube([WT,short_wall_l,h],0);
 }
@@ -115,7 +117,7 @@ translate([0,0,h-WT])
 
 stud_rad = (1.5*LU) - stud_radius_adjustment;
 
-first_stud = (unit_span / 2) - gap_factor - wall_adjustment;
+first_stud = (SU/2) - PF - G;
 
 //default as "normal". If we don't understand the value, default to true
 if (surface_type != "tile") 
@@ -134,14 +136,11 @@ if (surface_type != "tile")
 
 //INTERIOR RIDGES
 
-//TODO: confirm this adjustment works 
-//  I'm pretty sure it's not good enough... a .5 nozzle needs a smaller PF, but a larger ridge adjustment.
-//  Maybe just move the whole thing to a user option.
-//  These ridges are a challenge for printers. I probably also need a post adjustment
-ridge_d = .3 - PF/4; 
-ridge_w = LU/2<nozzle_size?nozzle_size:LU/2;
-
-//Q: does a 2x2 brick have ridges?
+// ridge depth should make up the space lost for interior wall adjusment + add .1mm (Lego play factor) to help it grip
+//TODO: now that I have a good default, make an adjustment for this
+ridge_d = PF + .1;
+//  These ridges can challenge printers; make sure minimum length is 2*nozzle
+ridge_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
 
 // plates and bases do not have ridges
 if (block_type == "brick" && w > 1)
@@ -183,14 +182,18 @@ if (w==1 )
     //Nx1 posts (narrow solid, cross support on every post)
     
     /*Note on adjument factor for the post radius.
+    
        Since these posts are 1LU, and studs are 3LU, 
        it's tempting to just use 1/3 that.
        However, I believe it's about area, rather than radius here.
        Thus, 1/9 is more appropriate (square of the sides).
+       (LU-(stud_radius_adjustment/9)) 
+      
        Of course, I could also be way off :)
-       But for now, not doing either. 
-       (LU-(stud_radius_adjustment/9))
-    
+       For now, I'm not doing either. Tests so far
+       using un-adjusted posts, and 1xN bricks fit
+       better than almost anything else I print. 
+       I may put an adjustment back in the future if people ask for it.   
     */
     
     support_w = LU/4<nozzle_size?nozzle_size:LU/4;
@@ -216,15 +219,14 @@ else
 {
     // Nx2+ posts (wide hollow, cross support every other post)
     
-
-    // Not sure how to handle cross support yet for non-standard (odd-length) bricks with an even number of posts
-    
-    //TODO: align cross support widths to an exact multiple of the nozzle diameter
+    // Not sure how to handle cross support yet for non-standard (odd-length)
+    // bricks with an even number of posts. 
+    // Supports are there, but not aligned well.
        
-    outer = ((((pow(2,.5)*5)-3)/2) * LU)-(PF/4);
-    inner = outer - (nozzle_size*2); //default: 1.5LU
+    outer = ((((pow(2,.5)*5)-3)/2) * LU)-support_post_radius_adjustment;
+    inner = outer - (nozzle_size*2);
     
-    sup_w = LU/2<nozzle_size?nozzle_size:LU/2;
+    sup_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
     
     for(x=[1:l-1])
     {

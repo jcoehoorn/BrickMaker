@@ -1,5 +1,3 @@
-
-
 //Number of studs long
 length = 2;
 
@@ -222,11 +220,12 @@ else
     // Not sure how to handle cross support yet for non-standard (odd-length)
     // bricks with an even number of posts. 
     // Supports are there, but not aligned well.
-       
-    outer = ((((pow(2,.5)*5)-3)/2) * LU)-support_post_radius_adjustment;
-    inner = outer - (nozzle_size*2);
+    
     
     sup_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
+    
+    outer = ((((pow(2,.5)*5)-3)/2) * LU)-support_post_radius_adjustment;
+    inner = outer - sup_w;
     
     for(x=[1:l-1])
     {

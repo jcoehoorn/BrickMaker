@@ -66,7 +66,6 @@ wall_thickness = lego_unit - (2 * wall_adjustment);
 include_cross_supports = "Y"; // [Y:Yes, N:No]
 /* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway when it's time to print the top wall */
 
-
 //brick is default. If we don't understand this, default to brick height
 brick_height = ((block_type == "plate" || block_type == "base")? (2*LU) : 6*LU);
 
@@ -141,6 +140,8 @@ ridge_d = PF + .1;
 ridge_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
 
 // plates and bases do not have ridges
+//TODO: test prints of plates are too loose compared to bricks. 
+// Real lego does not use ridges for plates, but I might need to
 if (block_type == "brick" && w > 1)
 {
     //long edge

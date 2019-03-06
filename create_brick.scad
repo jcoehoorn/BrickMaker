@@ -14,7 +14,7 @@ nozzle_size = .4;
 wall_adjustment = .2;
 
 //Additional spacing factor between individual pieces. This adjustment will reduce the length of walls on *both sides*.
-gap_factor = -0.08; 
+gap_factor = -0.088; 
 
 //Amount to remove from brick height. Divided by three for plates/bases. Typically full-height bricks are already okay, but plates may need a height reduction.
 height_adjustment = 0;
@@ -23,7 +23,7 @@ height_adjustment = 0;
 stud_height_adjustment = .1;
 
 //Amount to remove from the radius of studs
-stud_radius_adjustment = 0;
+stud_radius_adjustment = -.02;
 
 //Full-height brick vs plate vs base. A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
 block_type = "brick"; // [brick:Brick, plate:Plate, base:Base]

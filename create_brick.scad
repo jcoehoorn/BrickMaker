@@ -201,7 +201,7 @@ if (w==1 )
     {  
         translate([(SU*x)-PF-G,first_stud,0])
         {
-            cylinder(h, LU, LU, $fn=30);
+            cylinder(h, LU, LU, $fn=32);
         }
         
         //cross supports

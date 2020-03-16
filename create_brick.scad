@@ -1,8 +1,8 @@
 //Number of studs long
-length = 4;
+length = 3;
 
 //Number of studs wide
-width = 2;
+width = 1;
 
 //Nozzle Size
 // Used to avoid generating support lines too skinny to print well. If you want exact lines, lie and set this to something small like .1mm.
@@ -175,11 +175,9 @@ module LEGO_POSTS(studs_x, studs_y, post_height, wall_thickness_offset, xy_offse
             //cross supports
             if (include_cross_supports == "Y")
             {
-                translate([(x*SU) - (LU-WO) - (support_w/2), WO/2, LU])
+                translate([xy_init + (x*SU) -(SU/2) - (support_w/2), 0, LU])
                 { 
-                    //TODO: This re-written to avoid short_wall_l
-                    // Now we need to test it thoroughly
-                    cube([support_w,(LU * studs_y) - WO, post_height- (LU-WO)],0);
+                    cube([support_w,SU - 2*(LU-WO), post_height- LU],0);
                 }        
             }
         }

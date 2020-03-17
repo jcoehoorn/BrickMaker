@@ -2,7 +2,7 @@
 length = 4;
 
 //Number of studs wide
-width = 1;
+width = 2;
 
 //Nozzle Size
 // Used to avoid generating support lines too skinny to print well. If you want exact lines, lie and set this to something small like .1mm.
@@ -30,7 +30,7 @@ stud_radius_adjustment = -0.06;
 support_post_radius_adjustment = 0.022;
 
 //Full-height brick vs plate vs base. A base is a plate with a completely flat bottom. Base is NOT SUPPORTED yet. You will end up with a plate.
-block_type = "plate"; // [brick:Brick, plate:Plate, base:Base]
+block_type = "brick"; // [brick:Brick, plate:Plate, base:Base]
 
 //Normal has studs, tiles do not
 surface_type = "normal"; // [normal:Normal, tile:Tile]
@@ -255,7 +255,7 @@ module LEGO_POSTS(studs_x, studs_y, post_height, wall_thickness_offset, xy_offse
 //TODO: ridge adjustments (needed because of wall and nozzle adjustments)
 
 
-module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment, support_post_radius_adjustment, ridge_depth_adjustment, use_ridges_with_plates)
+module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment, support_post_radius_adjustment, ridge_depth_adjustment, use_ridges_with_plates, use_ridges_on_narrow_pieces)
 {
     //brick is default. If we don't understand this, default to brick height
     brick_height = ((block_type == "plate" || block_type == "base")? (2*LU) : 6*LU);
@@ -317,7 +317,8 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
     // plates and bases do not have ridges
     //TODO: test prints of plates are too loose compared to bricks. 
     // Real lego does not use ridges for plates, but I might need to
-    if ((brick_type == "brick" || use_ridges_with_plates=="Y") && w > 1)
+    // 1x1 bricks really need ridges!
+    if ((brick_type == "brick" || use_ridges_with_plates=="Y") && (w > 1 || use_ridges_on_narrow_pieces=="Y"))
     {   
         // ridge depth should make up the space lost for interior wall adjusment + add .1mm (Lego play factor) to help it grip
         //TODO: now that I have a good default, make an adjustment for this
@@ -339,13 +340,13 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
 module LEGO_STANDARD(studs_long, studs_wide, brick_type, surface_treatment)
 {
     LEGO_FULL(studs_long, studs_wide, brick_type, surface_treatment,
-        0, 0, 0, 0, 0, 0, "N");
+        0, 0, 0, 0, 0, 0, "N", "N");
 }
 
 module LEGO_PRINTING_DEFAULTS(studs_long, studs_wide, brick_type, surface_treatment)
 {
     LEGO_FULL(length, width, block_type, surface_type,
-        wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment,    support_post_radius_adjustment, ridge_depth_adjustment, "Y"); 
+        wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment,    support_post_radius_adjustment, ridge_depth_adjustment, "Y", "Y"); 
 }
 
 LEGO_PRINTING_DEFAULTS(length, width, block_type, surface_type);

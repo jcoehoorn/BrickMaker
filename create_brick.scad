@@ -11,9 +11,6 @@ nozzle_size = 0.4;
 // This adjustment will be removed from the thickness of the wall on *both sides* and does impact the overall size of the resulting brick.
 wall_adjustment = 0.1;
 
-// Use this and the support post adjustment to compensate for material removed from the walls
-ridge_depth_adjustment = -0.1;
-
 //Additional spacing factor between individual pieces. This adjustment will reduce the length of walls on *both sides*, but not the thickness of the wall.
 gap_factor = -0.1; 
 
@@ -24,7 +21,7 @@ height_adjustment = 0;
 stud_height_adjustment = 0.1;
 
 //Amount to remove from the radius of studs
-stud_radius_adjustment = -0.06;
+stud_radius_adjustment = -0.04;
 
 //Amount to remove from the radius of the supports posts. Only used on 2xN pieces. Default is one quarter of the standard play factor
 support_post_radius_adjustment = 0.022;
@@ -255,17 +252,17 @@ module LEGO_POSTS(studs_x, studs_y, post_height, wall_thickness_offset, xy_offse
 //TODO: ridge adjustments (needed because of wall and nozzle adjustments)
 
 
-module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment, support_post_radius_adjustment, ridge_depth_adjustment, use_ridges_with_plates, use_ridges_on_narrow_pieces)
+module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment, support_post_radius_adjustment, use_ridges_with_plates)
 {
     //brick is default. If we don't understand this, default to brick height
-    brick_height = ((block_type == "plate" || block_type == "base")? (2*LU) : 6*LU);
+    brick_height = ((brick_type == "plate" || brick_type == "base")? (2*LU) : 6*LU);
 
     final_height_adjustment = height_adjustment / ((block_type == "plate" || block_type == "base")? 3 : 1);
         
         wall_thickness = LU - (2 * (PF + wall_adjustment));
 
-    w = (width > length)?length:width;
-    l = (width > length)?width:length; //TODO: l vs 1 can be hard to see
+    w = (studs_wide > studs_long)?studs_long:studs_wide;
+    l = (studs_wide > studs_long)?studs_wide:studs_long; //TODO: l vs 1 can be hard to see
     h = brick_height - final_height_adjustment;
 
     G = gap_factor; //short-hand
@@ -281,19 +278,6 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
     
     include_cross_supports = "Y"; // [Y:Yes, N:No]
     /* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway when it's time to print the top wall */
-    
-    //brick is default. If we don't understand this, default to brick height
-    brick_height = ((brick_type == "plate" || brick_type == "base")? (2*LU) : 6*LU);
-    
-    final_height_adjustment = height_adjustment / ((block_type == "plate" || block_type == "base")? 3 : 1);
-
-    w = (width > length)?length:width;
-    l = (width > length)?width:length; //TODO: l vs 1 can be hard to see
-    h = brick_height - final_height_adjustment;
-
-    G = gap_factor; //short-hand
-    WT = wall_thickness; //short-hand
-    WA = PF + wall_adjustment; //short-hand; stands for Play Factor (Lego's term, I believe)
 
     //BRICK
    
@@ -317,12 +301,11 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
     // plates and bases do not have ridges
     //TODO: test prints of plates are too loose compared to bricks. 
     // Real lego does not use ridges for plates, but I might need to
-    // 1x1 bricks really need ridges!
-    if ((brick_type == "brick" || use_ridges_with_plates=="Y") && (w > 1 || use_ridges_on_narrow_pieces=="Y"))
+    if ((brick_type == "brick" || use_ridges_with_plates=="Y") && w > 1)
     {   
         // ridge depth should make up the space lost for interior wall adjusment + add .1mm (Lego play factor) to help it grip
         //TODO: now that I have a good default, make an adjustment for this
-        ridge_d = WA + 0.1 - ridge_depth_adjustment;
+        ridge_d = WA + 0.1;
         //  These ridges can challenge printers; make sure minimum length is 2*nozzle
         ridge_w = LU/2<(2*nozzle_size)?(2*nozzle_size):LU/2;
         
@@ -340,13 +323,13 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
 module LEGO_STANDARD(studs_long, studs_wide, brick_type, surface_treatment)
 {
     LEGO_FULL(studs_long, studs_wide, brick_type, surface_treatment,
-        0, 0, 0, 0, 0, 0, "N", "N");
+        0, 0, 0, 0, 0, "N");
 }
 
 module LEGO_PRINTING_DEFAULTS(studs_long, studs_wide, brick_type, surface_treatment)
 {
-    LEGO_FULL(length, width, block_type, surface_type,
-        wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment,    support_post_radius_adjustment, ridge_depth_adjustment, "Y", "Y"); 
+    LEGO_FULL(studs_long, studs_wide, brick_type, surface_treatment,
+        wall_adjustment, gap_factor, stud_height_adjustment, stud_radius_adjustment, support_post_radius_adjustment, "Y"); 
 }
 
 LEGO_PRINTING_DEFAULTS(length, width, block_type, surface_type);

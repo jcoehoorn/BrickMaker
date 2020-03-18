@@ -259,7 +259,7 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
 
     final_height_adjustment = height_adjustment / ((block_type == "plate" || block_type == "base")? 3 : 1);
         
-        wall_thickness = LU - (2 * (PF + wall_adjustment));
+    wall_thickness = LU - (2 * (PF + wall_adjustment));
 
     w = (studs_wide > studs_long)?studs_long:studs_wide;
     l = (studs_wide > studs_long)?studs_wide:studs_long; //TODO: l vs 1 can be hard to see
@@ -280,9 +280,6 @@ module LEGO_FULL(studs_long, studs_wide, brick_type, surface_type, wall_adjustme
     /* Note for above: moved to hidden section, because if you can't bridge that you're gonna have problems anyway when it's time to print the top wall */
 
     //BRICK
-   
-    long_wall_l = (l*SU)-(2*G)-(2*WA);
-    short_wall_l = (w*SU)-(2*G)-(2*WA);
 
     first_stud = (SU/2) - WA - G;
 
